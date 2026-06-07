@@ -58,7 +58,8 @@ ENABLE_LIVE_PLOT = False # Set to True to enable live plotting during optimizati
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CSV_PATH = os.path.join(SCRIPT_DIR, "post", "Wing-design_run", "wing_eval_log.csv")
-
+AIRFOIL_DATA_PATH = SCRIPT_DIR + r"\rae2822.dat"
+XFOIL_PATH = r"C:\Xfoil\XFOIL6.99\xfoil.exe" # Update this path to your XFOIL executable
 
 @dataclass
 class PredictionSummaryWing:
@@ -568,7 +569,7 @@ def load_airfoil_data(filepath, num_points=200):
 # IMPORTANT: Update this path to where your rae2822.dat file is located!
 RAE2822_X_BASELINE_FULL, RAE2822_Y_BASELINE_FULL, \
 RAE2822_X_BASELINE_UPPER, RAE2822_Y_BASELINE_UPPER, \
-RAE2822_X_BASELINE_LOWER, RAE2822_Y_BASELINE_LOWER = load_airfoil_data(r"C:\apps\code\Py_Dev\WS-AIMDO\simple_airfoil\CFD\Surrogate_Wing\rae2822.dat")
+RAE2822_X_BASELINE_LOWER, RAE2822_Y_BASELINE_LOWER = load_airfoil_data(AIRFOIL_DATA_PATH)
 
 # --- 2. Geometry Definition and Airfoil Generation (using NURBS) ---
 def generate_airfoil_coordinates_nurbs(design_variables_section, 
@@ -1045,7 +1046,7 @@ def run_xfoil_analysis(airfoil_coords, alpha, reynolds, mach_number, temp_id="")
         # Use DEVNULL for stdout and stderr to completely suppress console interaction
         # The 'input' argument provides stdin, so we don't set stdin=devnull
         process = subprocess.run(
-            [r"D:\software_resources\XFOIL6.99\xfoil.exe"], # Make sure this path is correct!
+            [XFOIL_PATH], # Make sure this path is correct!
             input="\n".join(full_commands),  # Pass the modified commands here
             text=True,
             check=False,
@@ -1590,6 +1591,9 @@ def run_optimization(args: Optional[argparse.Namespace] = None):
 
 # --- Main Execution ---
 if __name__ == "__main__":
+    AIRFOIL_DATA_PATH = SCRIPT_DIR + r"\rae2822.dat"
+    XFOIL_PATH = r"C:\Xfoil\XFOIL6.99\xfoil.exe" # Update this path to your XFOIL executable
+    
     args = parse_args()
     acceptance_threshold_map = {
         "conservative": 0.85,
@@ -1606,7 +1610,7 @@ if __name__ == "__main__":
         )
 
     # Initialize global plotting objects *BEFORE* any potential call to eval_opt
-    ENABLE_LIVE_PLOT = False
+    ENABLE_LIVE_PLOT = True
     if ENABLE_LIVE_PLOT:
         fig_live = plt.figure(figsize=(15, 7))
         gs = GridSpec(NUM_SPAN_SECTIONS, 2, figure=fig_live, width_ratios=[1, 1]) # 1:1 width ratio for left/right columns
@@ -1629,9 +1633,9 @@ if __name__ == "__main__":
     # Or some perturbed variables for testing:
     perturbation_magnitude = 0.005 # e.g., +/- 0.5% of chord
     initial_design_variables = (np.random.rand(NUM_DVS_TOTAL) * 2 - 1) * perturbation_magnitude
-    if not os.path.exists(r"C:\apps\code\Py_Dev\WS-AIMDO\simple_airfoil\CFD\Surrogate_Wing\rae2822.dat"):
+    if not os.path.exists(AIRFOIL_DATA_PATH):
         print("Creating a dummy 'rae2822.dat' file for demonstration purposes.")
-        with open(r"C:\apps\code\Py_Dev\WS-AIMDO\simple_airfoil\CFD\Surrogate_Wing\rae2822.dat", "w") as f:
+        with open(AIRFOIL_DATA_PATH, "w") as f:
             f.write("RAE2822 (Dummy Data)\n")
             f.write("1.000000 0.000000\n")
             f.write("0.900000 0.010000\n")
