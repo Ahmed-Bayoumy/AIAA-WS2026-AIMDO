@@ -25,6 +25,8 @@ The session introduces how AI/ML methods can accelerate multidisciplinary design
 - Bayesian Neural Networks (BNN) for probabilistic prediction
 - Physics-Informed Neural Networks (PINNs)
 - Agentic AI orchestration concepts
+- Bayesian Deep-Ensemble of NNs
+- Concurrency voids in Parallel MDO (if time allows)
 
 3. **Methodology and Validation**
 - AI-assisted constrained MDO formulation
@@ -33,10 +35,14 @@ The session introduces how AI/ML methods can accelerate multidisciplinary design
 
 4. **Case Studies**
 - **Sellar benchmark** with XDSM and validation figure
-- **Airfoil shape optimization (SU2 + OMADS)**:
+- - **Airfoil shape optimization (XFOIL + Pytorch + OMADS)**:
+  - Objective: maximize lift (implemented as minimize `-CL/CD`)
+  - Constraint: drag threshold (`|CD| - 0.006 <= 0`, `Max_Stress - 30MPa <= 0`)
+  - Workflow: Geometry Parameterization -> Aerodynamics (XFOIL) -> Structural Analysis -> OMADS Search
+- **Airfoil shape optimization (SU2 + Pytorch + OMADS)**:
   - Objective: maximize lift (implemented as minimize `-CL`)
   - Constraint: drag threshold (`|CD| - 0.006 <= 0`)
-  - Workflow: geometry parameterization -> meshing -> SU2 CFD -> OMADS search
+  - Workflow: Geometry Parameterization -> Meshing -> SU2 CFD -> Structural Analysis -> OMADS Search
 - **Supersonic Business Jet (SBJ)** using distributed MDO/NHATC context
 
 5. **Tools and Exercises**
@@ -56,7 +62,8 @@ The session introduces how AI/ML methods can accelerate multidisciplinary design
     - `PINN`
     - `MDO/Sellar`
     - `MDO/UAAI`
-    - `MDO/wing_MDO`
+    - `MDO/Wing_MDO`
+    - `MDO/Wing_MDO_XFOIL`
 
 ## Installation Instructions
 
